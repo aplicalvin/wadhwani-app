@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Fresh Fish</title>
+    <title>Reel Fresh</title>
     <link rel="shortcut icon" href="<?= base_url('logo.png') ?>" type="image/x-icon">
 
 
@@ -95,7 +95,7 @@
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="<?= site_url('/') ?>">
                 <img src="<?= base_url('logo.png') ?>" alt="Logo">
-                <span>Fresh Fish</span>
+                <span>Reel Fresh</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -117,7 +117,7 @@
         <div class="container">
             <div class="row align-items-center">
                 <div class="col-md-6 mb-4">
-                    <h5>Fresh Fish</h5>
+                    <h5>Reel Fresh</h5>
                     <p><?= esc($settings['alamat'] ?? 'Alamat belum diatur.') ?></p>
                     <p><i class="bi bi-whatsapp me-2"></i><?= esc($settings['telepon'] ?? 'No. WA belum diatur') ?></p>
                     <div>

@@ -16,15 +16,23 @@
         </div>
     </div>
 
+    <!-- Kategori Pilihan -->
     <div class="container my-5">
-        <h2 class="text-center mb-4">Kategori Pilihan</h2>
-        <div class="row g-4">
-            <?php foreach ($categories as $category) : ?>
-            <div class="col-md-4 col-lg-2">
-                <div class="card text-center shadow-sm h-100">
-                    <img src="<?= base_url('uploads/categories/' . $category->image) ?>" class="card-img-top p-3" alt="<?= esc($category->name) ?>" style="height: 150px; object-fit: contain;">
-                    <div class="card-body">
-                        <h5 class="card-title"><?= esc($category->name) ?></h5>
+        <h2 class="text-center mb-4 fw-bold text-primary">Kategori Pilihan</h2>
+        <div class="row g-4 justify-content-center">
+            <?php foreach ($categories as $category): 
+                $imagePath = $category->image && file_exists(FCPATH . 'uploads/categories/' . $category->image)
+                    ? base_url('uploads/categories/' . $category->image)
+                    : 'https://cdn-icons-png.flaticon.com/512/616/616408.png'; // placeholder kategori
+            ?>
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="card border-0 shadow-sm text-center h-100 rounded-4 hover-shadow transition">
+                    <img src="<?= $imagePath ?>" 
+                        alt="<?= esc($category->name) ?>" 
+                        class="p-3 mx-auto" 
+                        style="height: 140px; object-fit: contain;">
+                    <div class="card-body py-2">
+                        <h6 class="fw-semibold text-dark"><?= esc($category->name) ?></h6>
                     </div>
                 </div>
             </div>
@@ -56,17 +64,25 @@
     </div>
 
 
+    <!-- Apa Kata Mereka -->
     <div class="container my-5">
-        <h2 class="text-center mb-4">Apa Kata Mereka?</h2>
-        <div class="row">
-            <?php foreach ($testimonials as $item) : ?>
-            <div class="col-md-4 mb-3">
-                <div class="card shadow-sm h-100">
+        <h2 class="text-center mb-4 fw-bold text-primary">Apa Kata Mereka?</h2>
+        <div class="row g-4 justify-content-center">
+            <?php foreach ($testimonials as $item): 
+                $avatar = $item->image && file_exists(FCPATH . 'uploads/testimonials/' . $item->image)
+                    ? base_url('uploads/testimonials/' . $item->image)
+                    : 'https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=' . urlencode($item->customer_name);
+            ?>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm rounded-4 h-100">
                     <div class="card-body text-center">
-                        <!-- Use placeholder if no image is available -->
-                        <img src="<?= base_url('uploads/testimonials/' . ($item->image ?? 'https://randomuser.me/api/portraits/lego/1.jpg')) ?>" class="img-thumbnail rounded-circle mb-3" width="100" alt="<?= esc($item->customer_name) ?>">
-                        <p class="fst-italic">"<?= esc($item->body) ?>"</p>
-                        <h5 class="mt-3">- <?= esc($item->customer_name) ?></h5>
+                        <img src="<?= $avatar ?>" 
+                            class="rounded-circle shadow-sm mb-3" 
+                            width="90" height="90" 
+                            alt="<?= esc($item->customer_name) ?>" 
+                            style="object-fit: cover;">
+                        <p class="fst-italic text-secondary">"<?= esc($item->body) ?>"</p>
+                        <h6 class="fw-semibold mt-3 text-dark">- <?= esc($item->customer_name) ?></h6>
                     </div>
                 </div>
             </div>

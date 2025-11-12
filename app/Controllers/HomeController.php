@@ -25,8 +25,11 @@ class HomeController extends BaseController
         $data['categories'] = $categoryModel->findAll(6);
 
         // 3. Ambil testimoni yang sudah 'approved'
-        $data['testimonials'] = $testimonialModel->where('status', 'approved')
-                                                ->findAll();
+        $data['testimonials'] = $testimonialModel
+                                ->where('status', 'approved')
+                                ->orderBy('created_at', 'DESC')
+                                ->limit(3)
+                                ->findAll();
 
         // 4. Kirim ke view
         return view('public/home', $data);
