@@ -7,6 +7,7 @@ use App\Models\CategoryModel;
 
 class CategoryController extends BaseController
 {
+    private $uploadPath = 'uploads/categories';
     /**
      * Menampilkan daftar dan menangani modal
      * $showModal = 'new' | 'edit' | null
@@ -20,7 +21,7 @@ class CategoryController extends BaseController
             'categories' => $model->findAll(),
             'showModal'  => $showModal,
             'modalData'  => $modalData,
-            'errors'     => session()->get('errors'), // Ambil error validasi dari session
+            'errors'     => session()->get('errors'),
         ];
 
         return view('admin/categories/index', $data);
@@ -55,18 +56,26 @@ class CategoryController extends BaseController
         $rules = [
             'name' => 'required|string|max_length[100]',
             'description' => 'permit_empty|string',
+            'image' => 'permit_empty|uploaded[image]|max_size[image,2048]|is_image[image]', // Validasi gambar
         ];
 
         if (!$this->validate($rules)) {
-            // Jika validasi gagal, kembali ke form 'new' dengan error
             return redirect()->to(site_url('admin/categories/new'))->withInput()->with('errors', $this->validator->getErrors());
         }
 
         $model = new CategoryModel();
-        $model->save($this->request->getPost());
+        $data = $this->request->getPost();
+
+        // Panggil helper upload
+        $imageName = $this->handleImageUpload('image', $this->uploadPath);
+        if ($imageName) {
+            $data['image'] = $imageName;
+        }
+
+        $model->save($data);
         
         return redirect()->to(site_url('admin/categories'))->with('message', 'Kategori berhasil disimpan.');
-    }
+    }  
 
     // Memperbarui data
     public function update($id)
@@ -74,15 +83,26 @@ class CategoryController extends BaseController
         $rules = [
             'name' => 'required|string|max_length[100]',
             'description' => 'permit_empty|string',
+            'image' => 'permit_empty|uploaded[image]|max_size[image,2048]|is_image[image]', // Validasi gambar
         ];
 
         if (!$this->validate($rules)) {
-            // Jika validasi gagal, kembali ke form 'edit' dengan error
             return redirect()->to(site_url("admin/categories/edit/$id"))->withInput()->with('errors', $this->validator->getErrors());
         }
 
         $model = new CategoryModel();
-        $model->update($id, $this->request->getPost());
+        $data = $this->request->getPost();
+        
+        // Ambil data lama untuk cek gambar
+        $oldCategory = $model->find($id);
+
+        // Panggil helper upload (dengan nama file lama)
+        $newImageName = $this->handleImageUpload('image', $this->uploadPath, $oldCategory->image);
+        if ($newImageName) {
+            $data['image'] = $newImageName;
+        }
+
+        $model->update($id, $data);
 
         return redirect()->to(site_url('admin/categories'))->with('message', 'Kategori berhasil diperbarui.');
     }
@@ -91,6 +111,17 @@ class CategoryController extends BaseController
     public function delete($id)
     {
         $model = new CategoryModel();
+        
+        // Ambil data sebelum dihapus
+        $category = $model->find($id);
+        if (!$category) {
+            return redirect()->to(site_url('admin/categories'))->with('error', 'Kategori tidak ditemukan.');
+        }
+
+        // Hapus file gambar
+        $this->deleteImage($this->uploadPath, $category->image);
+
+        // Hapus data dari DB
         $model->delete($id);
         
         return redirect()->to(site_url('admin/categories'))->with('message', 'Kategori berhasil dihapus.');

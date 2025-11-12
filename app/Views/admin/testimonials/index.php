@@ -22,6 +22,7 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
+                            <th style="width: 50px;">Foto</th> 
                             <th>Nama Pelanggan</th>
                             <th>Rating</th>
                             <th>Status</th>
@@ -31,6 +32,13 @@
                     <tbody>
                         <?php foreach ($testimonials as $item) : ?>
                             <tr>
+                                <td>
+                                    <?php if ($item->image): ?>
+                                        <img src="<?= base_url('uploads/testimonials/' . $item->image) ?>" alt="<?= esc($item->customer_name) ?>" width="50" class="img-thumbnail rounded-circle">
+                                    <?php else: ?>
+                                        <img src="https://randomuser.me/api/portraits/lego/5.jpg" alt="no image" width="100" class="img-thumbnail rounded-circle">
+                                    <?php endif; ?>
+                                </td>
                                 <td><?= esc($item->customer_name) ?></td>
                                 <td><i class="bi bi-star-fill text-warning"></i> <?= esc($item->rating) ?></td>
                                 <td>
@@ -55,7 +63,7 @@
     </div>
 
 <div class="modal fade" id="crud-modal" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modal-title">
@@ -65,9 +73,9 @@
       </div>
       
       <?php if ($showModal == 'edit') : ?>
-        <form action="<?= site_url('admin/testimonials/update/' . $modalData->id) ?>" method="POST">
+        <form action="<?= site_url('admin/testimonials/update/' . $modalData->id) ?>" method="POST" enctype="multipart/form-data">
       <?php else : ?>
-        <form action="<?= site_url('admin/testimonials/save') ?>" method="POST">
+        <form action="<?= site_url('admin/testimonials/save') ?>" method="POST" enctype="multipart/form-data">
       <?php endif; ?>
 
         <div class="modal-body">
@@ -118,6 +126,23 @@
                     <div class="invalid-feedback"><?= esc($errors['body']) ?></div>
                 <?php endif; ?>
             </div>
+            
+            <div class="mb-3">
+                <label for="image" class="form-label">Foto Pelanggan (Opsional)</label>
+                <input type="file" class="form-control <?= isset($errors['image']) ? 'is-invalid' : '' ?>" 
+                       id="image" name="image">
+                <?php if(isset($errors['image'])): ?>
+                    <div class="invalid-feedback"><?= esc($errors['image']) ?></div>
+                <?php endif; ?>
+                
+                <?php if ($showModal == 'edit' && $modalData->image): ?>
+                    <div class="mt-2">
+                        <img src="<?= base_url('uploads/testimonials/' . $modalData->image) ?>" alt="Current Image" width="100" class="img-thumbnail rounded-circle">
+                        <small class="d-block text-muted">Foto saat ini. Upload file baru untuk mengganti.</small>
+                    </div>
+                <?php endif; ?>
+            </div>
+
         </div>
         
         <div class="modal-footer">

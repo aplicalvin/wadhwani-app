@@ -32,6 +32,11 @@ class CreateTestimonialsTable extends Migration
                 'constraint' => '20',
                 'default'    => 'pending',
             ],
+            'image' => [
+                'type'       => 'VARCHAR',
+                'constraint' => '255',
+                'null'       => true,
+            ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,

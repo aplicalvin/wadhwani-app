@@ -11,5 +11,5 @@ class TestimonialModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType       = 'object';
     protected $useTimestamps    = true;
-    protected $allowedFields    = ['customer_name', 'body', 'rating', 'status'];
+    protected $allowedFields    = ['customer_name', 'body', 'rating', 'status', 'image'];
 }

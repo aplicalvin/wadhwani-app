@@ -22,6 +22,7 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
+                            <th style="width: 50px;">Gambar</th> 
                             <th>Nama Produk</th>
                             <th>Kategori</th>
                             <th>Harga (per Kg)</th>
@@ -31,6 +32,13 @@
                     <tbody>
                         <?php foreach ($products as $product) : ?>
                             <tr>
+                                <td>
+                                    <?php if ($product->image): ?>
+                                        <img src="<?= base_url('uploads/products/' . $product->image) ?>" alt="<?= esc($product->name) ?>" width="50" class="img-thumbnail">
+                                    <?php else: ?>
+                                        <img src="https://via.placeholder.com/50" alt="no image" width="50" class="img-thumbnail">
+                                    <?php endif; ?>
+                                </td>
                                 <td><?= esc($product->name) ?></td>
                                 <td><?= esc($product->category_name) ?></td>
                                 <td>Rp <?= number_format($product->price_per_kg, 0, ',', '.') ?></td>
@@ -51,7 +59,7 @@
     </div>
 
 <div class="modal fade" id="crud-modal" tabindex="-1" aria-labelledby="modal-title" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg"> 
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modal-title">
@@ -61,9 +69,9 @@
       </div>
       
       <?php if ($showModal == 'edit') : ?>
-        <form action="<?= site_url('admin/products/update/' . $modalData->id) ?>" method="POST">
+        <form action="<?= site_url('admin/products/update/' . $modalData->id) ?>" method="POST" enctype="multipart/form-data">
       <?php else : ?>
-        <form action="<?= site_url('admin/products/save') ?>" method="POST">
+        <form action="<?= site_url('admin/products/save') ?>" method="POST" enctype="multipart/form-data">
       <?php endif; ?>
 
         <div class="modal-body">
@@ -117,6 +125,23 @@
                     <div class="invalid-feedback"><?= esc($errors['description']) ?></div>
                 <?php endif; ?>
             </div>
+
+            <div class="mb-3">
+                <label for="image" class="form-label">Gambar Produk</UBAH>
+                <input type="file" class="form-control <?= isset($errors['image']) ? 'is-invalid' : '' ?>" 
+                       id="image" name="image">
+                <?php if(isset($errors['image'])): ?>
+                    <div class="invalid-feedback"><?= esc($errors['image']) ?></div>
+                <?php endif; ?>
+                
+                <?php if ($showModal == 'edit' && $modalData->image): ?>
+                    <div class="mt-2">
+                        <img src="<?= base_url('uploads/products/' . $modalData->image) ?>" alt="Current Image" width="100" class="img-thumbnail">
+                        <small class="d-block text-muted">Gambar saat ini. Upload file baru untuk mengganti.</small>
+                    </div>
+                <?php endif; ?>
+            </div>
+            
         </div>
         
         <div class="modal-footer">

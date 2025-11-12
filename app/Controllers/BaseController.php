@@ -41,7 +41,7 @@ abstract class BaseController extends Controller
      * Be sure to declare properties for any property fetch you initialized.
      * The creation of dynamic property is deprecated in PHP 8.2.
      */
-    // protected $session;
+    protected $session;
 
     /**
      * @return void
@@ -54,5 +54,58 @@ abstract class BaseController extends Controller
         // Preload any models, libraries, etc, here.
 
         // E.g.: $this->session = service('session');
+        $this->session = \Config\Services::session();
+    }
+
+    /**
+     * Fungsi helper untuk menangani upload gambar
+     *
+     * @param string $inputName - Nama input file (misal: 'image')
+     * @param string $uploadPath - Path folder (misal: 'uploads/categories')
+     * @param string|null $oldImageName - Nama file lama (untuk dihapus saat update)
+     * @return string|null - Mengembalikan nama file baru, atau null jika gagal/tidak ada file
+     */
+    protected function handleImageUpload(string $inputName, string $uploadPath, string $oldImageName = null): ?string
+    {
+        $file = $this->request->getFile($inputName);
+
+        // Cek apakah ada file valid yang diupload
+        if ($file && $file->isValid() && !$file->hasMoved()) {
+            
+            // Validasi file (Opsional tapi disarankan)
+            // if (!$file->isImage()) {
+            //     session()->setFlashdata('error', 'File yang diupload bukan gambar.');
+            //     return null;
+            // }
+
+            // Hapus gambar lama jika ada
+            if ($oldImageName) {
+                $oldPath = FCPATH . $uploadPath . '/' . $oldImageName;
+                if (file_exists($oldPath)) {
+                    unlink($oldPath);
+                }
+            }
+
+            // Pindahkan file baru
+            $newName = $file->getRandomName();
+            $file->move(FCPATH . $uploadPath, $newName);
+
+            return $newName; // Kembalikan nama file baru untuk disimpan di DB
+        }
+        
+        return null; // Tidak ada file baru yang diupload
+    }
+
+    /**
+     * Fungsi helper untuk menghapus gambar saat delete
+     */
+    protected function deleteImage(string $uploadPath, string $imageName = null)
+    {
+        if ($imageName) {
+            $path = FCPATH . $uploadPath . '/' . $imageName;
+            if (file_exists($path)) {
+                unlink($path);
+            }
+        }
     }
 }

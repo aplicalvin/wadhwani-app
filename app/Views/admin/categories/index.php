@@ -22,6 +22,7 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
+                            <th style="width: 50px;">Gambar</th>
                             <th>Nama</th>
                             <th>Deskripsi</th>
                             <th style="width: 150px;">Aksi</th>
@@ -29,7 +30,14 @@
                     </thead>
                     <tbody>
                         <?php foreach ($categories as $category) : ?>
-                            <tr>
+                            <tr>    
+                                <td>
+                                    <?php if ($category->image): // <-- Ganti $item jadi $category ?>
+                                        <img src="<?= base_url('uploads/categories/' . $category->image) ?>" alt="<?= esc($category->name) ?>" width="50" class="img-thumbnail">
+                                    <?php else: ?>
+                                        <img src="https://via.placeholder.com/50" alt="no image" width="50" class="img-thumbnail">
+                                    <?php endif; ?>
+                                    </td>
                                 <td><?= esc($category->name) ?></td>
                                 <td><?= esc($category->description) ?></td>
                                 <td>
@@ -59,9 +67,9 @@
       </div>
       
       <?php if ($showModal == 'edit') : ?>
-        <form action="<?= site_url('admin/categories/update/' . $modalData->id) ?>" method="POST">
+        <form action="<?= site_url('admin/categories/update/' . $modalData->id) ?>" method="POST" enctype="multipart/form-data">
       <?php else : ?>
-        <form action="<?= site_url('admin/categories/save') ?>" method="POST">
+        <form action="<?= site_url('admin/categories/save') ?>" method="POST" enctype="multipart/form-data">
       <?php endif; ?>
 
         <div class="modal-body">
@@ -89,7 +97,23 @@
                     <div class="invalid-feedback"><?= esc($errors['description']) ?></div>
                 <?php endif; ?>
             </div>
-        </div>
+            
+            <div class="mb-3">
+                <label for="image" class="form-label">Gambar Kategori</label>
+                <input type="file" class="form-control <?= isset($errors['image']) ? 'is-invalid' : '' ?>" 
+                       id="image" name="image">
+                <?php if(isset($errors['image'])): ?>
+                    <div class="invalid-feedback"><?= esc($errors['image']) ?></div>
+                <?php endif; ?>
+                
+                <?php if ($showModal == 'edit' && $modalData->image): ?>
+                    <div class="mt-2">
+                        <img src="<?= base_url('uploads/categories/' . $modalData->image) ?>" alt="Current Image" width="100" class="img-thumbnail">
+                        <small class="d-block text-muted">Gambar saat ini. Upload file baru untuk mengganti.</small>
+                    </div>
+                <?php endif; ?>
+            </div>
+            </div>
         
         <div class="modal-footer">
           <a href="<?= site_url('admin/categories') ?>" class="btn btn-secondary">Batal</a>
@@ -105,9 +129,7 @@
 
 <?= $this->section('scripts') ?>
 <script>
-    // KUNCI UTAMA: Buka modal secara otomatis jika ada flag
     document.addEventListener('DOMContentLoaded', () => {
-        // Cek jika ada flag $showModal ATAU ada session error (artinya validasi gagal)
         <?php if (isset($showModal) || session()->has('errors')): ?>
             const myModal = new bootstrap.Modal(document.getElementById('crud-modal'));
             myModal.show();

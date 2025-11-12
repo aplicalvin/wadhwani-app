@@ -32,6 +32,11 @@ class CreateProductsTable extends Migration
                 'type'       => 'DECIMAL',
                 'constraint' => '10,2',
             ],
+            'image' => [
+                'type'       => 'VARCHAR',
+                'constraint' => '255',
+                'null'       => true,
+            ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,

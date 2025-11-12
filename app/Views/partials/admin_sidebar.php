@@ -25,8 +25,8 @@
             </a>
         </li>
         <li>
-            <a href="<?= site_url('admin/users') ?>" class="nav-link text-white <?= (strpos(uri_string(), 'admin/testimonials') !== false) ? 'active' : '' ?>">
-                <i class="bi bi-chat-left-quote me-2"></i> Users
+            <a href="<?= site_url('admin/users') ?>" class="nav-link text-white <?= (strpos(uri_string(), 'admin/users') !== false) ? 'active' : '' ?>">
+                <i class="bi bi-people-fill me-2"></i> Users
             </a>
         </li>
         <li>

@@ -23,7 +23,11 @@ class CreateCategoriesTable extends Migration
                 'type' => 'TEXT',
                 'null' => true,
             ],
-            // Kita sepakat tidak ada gambar dulu
+            'image' => [
+                'type'       => 'VARCHAR',
+                'constraint' => '255',
+                'null'       => true,
+            ],
             'created_at' => [
                 'type' => 'DATETIME',
                 'null' => true,

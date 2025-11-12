@@ -12,5 +12,5 @@ class ProductModel extends Model
     protected $returnType       = 'object';
     protected $useTimestamps    = true;
     protected $useSoftDeletes   = true; // Mengaktifkan soft delete (butuh 'deleted_at')
-    protected $allowedFields    = ['category_id', 'name', 'description', 'price_per_kg'];
+    protected $allowedFields    = ['category_id', 'name', 'description', 'price_per_kg', 'image'];
 }

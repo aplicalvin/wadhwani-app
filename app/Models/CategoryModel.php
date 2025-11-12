@@ -11,5 +11,5 @@ class CategoryModel extends Model
     protected $useAutoIncrement = true;
     protected $returnType       = 'object';
     protected $useTimestamps    = true;
-    protected $allowedFields    = ['name', 'description'];
+    protected $allowedFields    = ['name', 'description', 'image'];
 }
