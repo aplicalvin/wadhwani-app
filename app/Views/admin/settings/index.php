@@ -35,14 +35,7 @@
                 <?php endif; ?>
             </div>
 
-            <div class="mb-3">
-                <label for="maps_url" class="form-label">URL Google Maps</label>
-                <input type="text" class="form-control <?= (session()->get('errors.maps_url')) ? 'is-invalid' : '' ?>" 
-                       id="maps_url" name="maps_url" value="<?= esc($settings['maps_url'] ?? '') ?>" placeholder="https://maps.app.goo.gl/...">
-                <?php if (session()->get('errors.maps_url')) : ?>
-                    <div class="invalid-feedback"><?= session()->get('errors.maps_url') ?></div>
-                <?php endif; ?>
-            </div>
+           
 
             <hr>
             <h5 class="mb-3">Gambar Hero</h5>

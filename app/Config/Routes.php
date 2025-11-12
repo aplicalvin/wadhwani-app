@@ -8,7 +8,16 @@ use CodeIgniter\Router\RouteCollection;
 
 // --- RUTE PUBLIK & AUTENTIKASI ---
 // Rute publik (jika ada)
-$routes->get('/', 'Home::index'); 
+// $routes->get('/', 'Home::index'); 
+
+// Rute Halaman Utama (Landing Page)
+$routes->get('/', 'HomeController::index', ['as' => 'home']);
+
+// Rute Halaman "Our Product"
+$routes->get('products', 'ProductPageController::index', ['as' => 'products.index']);
+
+// Rute untuk mengambil data detail produk (JSON untuk popup)
+$routes->get('product/detail/(:num)', 'ProductPageController::detail/$1', ['as' => 'products.detail']);
 
 // Rute Login
 $routes->get('login', 'Admin\AuthController::login', ['as' => 'login']);
