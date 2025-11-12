@@ -4,7 +4,13 @@
 
     <h1 class="h3 mb-3">Dashboard</h1>
 
-    <div class="row">
+    <div class="alert alert-primary shadow-sm" role="alert">
+        <h4 class="alert-heading mb-0">
+            Selamat Datang, <?= esc(session()->get('name') ?? 'Admin') ?>! 👋
+        </h4>
+        <p class="mb-0">Senang melihat Anda kembali. Berikut adalah ringkasan untuk Wadhani Iwak hari ini.</p>
+    </div>
+    <div class="row mt-4">
         
         <div class="col-xl-3 col-md-6 mb-4">
             <div class="card text-bg-primary shadow h-100 py-2">
@@ -75,4 +81,4 @@
 
     </div>
 
-    <?= $this->endSection() ?>
+<?= $this->endSection() ?>
