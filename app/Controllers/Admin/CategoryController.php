@@ -4,88 +4,95 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Models\CategoryModel;
-use CodeIgniter\API\ResponseTrait; // <-- PENTING untuk respons JSON
 
 class CategoryController extends BaseController
 {
-    use ResponseTrait; // <-- Gunakan Trait
+    /**
+     * Menampilkan daftar dan menangani modal
+     * $showModal = 'new' | 'edit' | null
+     * $modalData = data untuk form
+     */
+    private function showIndex($showModal = null, $modalData = null)
+    {
+        $model = new CategoryModel();
+        
+        $data = [
+            'categories' => $model->findAll(),
+            'showModal'  => $showModal,
+            'modalData'  => $modalData,
+            'errors'     => session()->get('errors'), // Ambil error validasi dari session
+        ];
 
+        return view('admin/categories/index', $data);
+    }
+
+    // Menampilkan daftar
     public function index()
     {
-        // Fungsi ini HANYA memuat halaman utama
-        // Logika tabel akan kita buat di view dengan AJAX
-        // atau bisa juga kita kirim data awalnya
-        $model = new CategoryModel();
-        $data['categories'] = $model->orderBy('name', 'ASC')->findAll();
-        
-        return view('admin/categories/index', $data); // Asumsi nama view-nya
+        return $this->showIndex();
     }
 
-    public function store()
+    // Menyiapkan data untuk modal 'new'
+    public function new()
     {
-        // Validasi
-        $rules = [
-            'name' => 'required|max_length[100]',
-            'description' => 'permit_empty|string',
-        ];
-
-        if (!$this->validate($rules)) {
-            // Kirim error validasi sebagai JSON
-            return $this->fail($this->validator->getErrors());
-        }
-
-        // Simpan data
-        $model = new CategoryModel();
-        $model->save([
-            'name' => $this->request->getPost('name'),
-            'description' => $this->request->getPost('description'),
-        ]);
-
-        // Kirim respons sukses sebagai JSON
-        return $this->respondCreated(['status' => 'success', 'message' => 'Kategori berhasil ditambahkan.']);
+        return $this->showIndex('new', new \App\Entities\Category()); // Kirim entity kosong
     }
 
+    // Menyiapkan data untuk modal 'edit'
     public function edit($id)
     {
-        // Ambil data by ID
         $model = new CategoryModel();
         $data = $model->find($id);
-
-        if ($data) {
-            // Kirim data kategori sebagai JSON
-            return $this->respond($data);
+        if (!$data) {
+            throw new \CodeIgniter\Exceptions\PageNotFoundException('Kategori tidak ditemukan');
         }
-
-        return $this->failNotFound('Data kategori tidak ditemukan.');
+        return $this->showIndex('edit', $data);
     }
 
-    public function update($id)
+    // Menyimpan data baru
+    public function save()
     {
-        // Validasi
         $rules = [
-            'name' => 'required|max_length[100]',
+            'name' => 'required|string|max_length[100]',
             'description' => 'permit_empty|string',
         ];
 
         if (!$this->validate($rules)) {
-            return $this->fail($this->validator->getErrors());
+            // Jika validasi gagal, kembali ke form 'new' dengan error
+            return redirect()->to(site_url('admin/categories/new'))->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        // Update data
         $model = new CategoryModel();
-        $model->update($id, [
-            'name' => $this->request->getPost('name'),
-            'description' => $this->request->getPost('description'),
-        ]);
-
-        return $this->respondUpdated(['status' => 'success', 'message' => 'Kategori berhasil diperbarui.']);
+        $model->save($this->request->getPost());
+        
+        return redirect()->to(site_url('admin/categories'))->with('message', 'Kategori berhasil disimpan.');
     }
 
+    // Memperbarui data
+    public function update($id)
+    {
+        $rules = [
+            'name' => 'required|string|max_length[100]',
+            'description' => 'permit_empty|string',
+        ];
+
+        if (!$this->validate($rules)) {
+            // Jika validasi gagal, kembali ke form 'edit' dengan error
+            return redirect()->to(site_url("admin/categories/edit/$id"))->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $model = new CategoryModel();
+        $model->update($id, $this->request->getPost());
+
+        return redirect()->to(site_url('admin/categories'))->with('message', 'Kategori berhasil diperbarui.');
+    }
+
+    // Menghapus data
     public function delete($id)
     {
         $model = new CategoryModel();
         $model->delete($id);
-
-        return $this->respondDeleted(['status' => 'success', 'message' => 'Kategori berhasil dihapus.']);
+        
+        return redirect()->to(site_url('admin/categories'))->with('message', 'Kategori berhasil dihapus.');
     }
 }
