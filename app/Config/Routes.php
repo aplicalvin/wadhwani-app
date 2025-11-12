@@ -5,21 +5,34 @@ use CodeIgniter\Router\RouteCollection;
 /**
  * @var RouteCollection $routes
  */
-$routes->get('/', 'Home::index'); // Halaman utama (public)
 
-// --- GRUP RUTE ADMIN (NON-AJAX / PHP STANDAR) ---
-$routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function ($routes) {
+// --- RUTE PUBLIK & AUTENTIKASI ---
+// Rute publik (jika ada)
+$routes->get('/', 'Home::index'); 
 
-    // Dashboard (Asumsi Anda punya Dashboard Controller)
-    $routes->get('/', 'Dashboard::index', ['as' => 'admin.dashboard']);
+// Rute Login
+$routes->get('login', 'Admin\AuthController::login', ['as' => 'login']);
+$routes->post('login/attempt', 'Admin\AuthController::attemptLogin', ['as' => 'login.attempt']);
+$routes->get('logout', 'Admin\AuthController::logout', ['as' => 'logout']);
+
+
+// --- GRUP RUTE ADMIN (DILINDUNGI) ---
+// Semua rute di dalam grup ini akan dicek oleh filter 'auth'
+// Jika belum login atau bukan admin, akan ditendang ke 'login'
+
+$routes->group('admin', ['namespace' => 'App\Controllers\Admin', 'filter' => 'auth'], function ($routes) {
+
+    // Dashboard
+    $routes->get('/', 'Dashboard::index', ['as' => 'admin.dashboard.redirect']); // Redirect /admin ke /admin/dashboard
+    $routes->get('dashboard', 'Dashboard::index', ['as' => 'admin.dashboard']);
 
     // --- Modul Kategori ---
     $routes->get('categories', 'CategoryController::index', ['as' => 'admin.categories']);
-    $routes->get('categories/new', 'CategoryController::new', ['as' => 'admin.categories.new']); // Membuka modal 'create'
-    $routes->get('categories/edit/(:num)', 'CategoryController::edit/$1', ['as' => 'admin.categories.edit']); // Membuka modal 'edit'
-    $routes->post('categories/save', 'CategoryController::save', ['as' => 'admin.categories.save']); // Proses form 'create'
-    $routes->post('categories/update/(:num)', 'CategoryController::update/$1', ['as' => 'admin.categories.update']); // Proses form 'edit'
-    $routes->get('categories/delete/(:num)', 'CategoryController::delete/$1', ['as' => 'admin.categories.delete']); // Hapus data
+    $routes->get('categories/new', 'CategoryController::new', ['as' => 'admin.categories.new']);
+    $routes->get('categories/edit/(:num)', 'CategoryController::edit/$1', ['as' => 'admin.categories.edit']);
+    $routes->post('categories/save', 'CategoryController::save', ['as' => 'admin.categories.save']);
+    $routes->post('categories/update/(:num)', 'CategoryController::update/$1', ['as' => 'admin.categories.update']);
+    $routes->get('categories/delete/(:num)', 'CategoryController::delete/$1', ['as' => 'admin.categories.delete']);
 
     // --- Modul Produk ---
     $routes->get('products', 'ProductController::index', ['as' => 'admin.products']);
@@ -37,7 +50,16 @@ $routes->group('admin', ['namespace' => 'App\Controllers\Admin'], function ($rou
     $routes->post('testimonials/update/(:num)', 'TestimonialController::update/$1', ['as' => 'admin.testimonials.update']);
     $routes->get('testimonials/delete/(:num)', 'TestimonialController::delete/$1', ['as' => 'admin.testimonials.delete']);
 
-    // --- Modul Pengaturan (Ini sudah benar dari awal, tidak pakai modal) ---
+    // --- Modul Users ---
+    $routes->get('users', 'UserController::index', ['as' => 'admin.users']);
+    $routes->get('users/new', 'UserController::new', ['as' => 'admin.users.new']);
+    $routes->get('users/edit/(:num)', 'UserController::edit/$1', ['as' => 'admin.users.edit']);
+    $routes->post('users/save', 'UserController::save', ['as' => 'admin.users.save']);
+    $routes->post('users/update/(:num)', 'UserController::update/$1', ['as' => 'admin.users.update']);
+    $routes->get('users/delete/(:num)', 'UserController::delete/$1', ['as' => 'admin.users.delete']);
+
+    // --- Modul Pengaturan ---
     $routes->get('settings', 'SettingController::index', ['as' => 'admin.settings']);
     $routes->post('settings/update', 'SettingController::update', ['as' => 'admin.settings.update']);
+
 });

@@ -25,18 +25,25 @@
             </a>
         </li>
         <li>
+            <a href="<?= site_url('admin/users') ?>" class="nav-link text-white <?= (strpos(uri_string(), 'admin/testimonials') !== false) ? 'active' : '' ?>">
+                <i class="bi bi-chat-left-quote me-2"></i> Users
+            </a>
+        </li>
+        <li>
             <a href="<?= site_url('admin/settings') ?>" class="nav-link text-white <?= (strpos(uri_string(), 'admin/settings') !== false) ? 'active' : '' ?>">
                 <i class="bi bi-gear me-2"></i> Pengaturan
             </a>
         </li>
     </ul>
     <hr>
-    <div>
+    <div class="dropdown">
         <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            <strong>Admin</strong>
+            <strong><?= esc(session()->get('name')) ?? 'Admin' ?></strong>
         </a>
         <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-            <li><a class="dropdown-item" href="#">Logout</a></li>
+            <li><a class="dropdown-item" href="<?= site_url('logout') ?>">
+                <i class="bi bi-box-arrow-right me-2"></i> Logout
+            </a></li>
         </ul>
     </div>
 </div>
